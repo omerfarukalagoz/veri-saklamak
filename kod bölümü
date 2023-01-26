@@ -1,0 +1,74 @@
+package com.omerfaruk.layout;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+
+    EditText editNumber;
+    TextView textView;
+    SharedPreferences sharedPreferences;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editNumber = findViewById(R.id.editNumber);
+        textView = findViewById(R.id.textView);
+        sharedPreferences = this.getSharedPreferences("com.omerfaruk.layout", Context.MODE_PRIVATE);  //saklıycagım veri tabanına sadece benım olusturacagım uygulamadan ulaşılsın
+
+        int storedAge = sharedPreferences.getInt("storaged age", 0);  //storaged age == age old. için save içinde koydugum yaşı storaged age ile buradan alıp oncreate içine taşıyorum ve int değişkenine atyorum.
+
+        if(storedAge == 0){
+            textView.setText("Your Age :");
+        }else{
+            textView.setText("Your Age:" + storedAge);   //kaydedilen yaş 0  değilse kaydedilmiş yaşı uygulama kapanıp tekrar açıldığında yazdırıyorum (kaydediyorum).
+
+        }
+
+    }
+
+    public void save(View view){    //save i onclick etmiştik. butona basınca ne olacak???
+
+        if(editNumber.getText().toString().matches("")){
+            textView.setText("Enter Age!");
+        }else{
+            int age = Integer.parseInt(editNumber.getText().toString());
+            textView.setText("Your Age :" + age);
+            sharedPreferences.edit().putInt("storaged age",age).apply();      //age == storaged age  yapıp putınt ile koyuyorum
+                                                                                //app silinmediği sürece, app kapansada uygulamaya tekrar girdiğimizde bu veriyi (yaş) küçük bir veritabanında saklıyor.
+
+        }
+
+    }
+
+
+    public void delete(View view){     //yaşımızı silmek istediğimizde??? delete butonu ile kaydettiğimiz yaşı silicez ve (your age :) yazdırıcaz.
+
+        int storedData = sharedPreferences.getInt("storaged age",0);   //önce getınt ile storaged age kullanarak yaşı alyorum. ve int storedData içine atıyorum.
+        if(storedData != 0){
+            sharedPreferences.edit().remove("storaged age").apply();    //kaydedilen data sfı değilse remove ile yaşı kaldırıyorum ve your age : yazdırıyorum.
+            textView.setText("Your age :");
+        }
+
+    }
+
+}
+
+
+/*
+
+    verilerimizi saklamak istersek nabıcaz???
+    hesap makinesine 3+5=8 bulduk fakat uygulamayı kapatıp tekrar açınca 8 i orda göremiyoruz. verimizi saklamıyoruz henüz.
+
+    ***SharedPreferences sharedPreferences = this.getSharedPreferences("com.omerfaruk.layout", Context.MODE_PRIVATE);***
+
